@@ -10,11 +10,18 @@ Then open in Chrome:
 $port = 8000
 $root = Get-Location
 
-Write-Host "Serving $root on http://localhost:$port/ (Ctrl+C to stop)" -ForegroundColor Cyan
-
+# Listen on all interfaces so other devices on the same network can reach it.
 $listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add("http://localhost:$port/")
+$listener.Prefixes.Add("http://+:$port/")
 $listener.Start()
+
+# Determine a local IP (best effort) for other devices on the same Wi‑Fi/LAN.
+$localIp = (Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp | Where-Object { $_.IPAddress -notlike '169.*' -and $_.IPAddress -notlike '127.*' } | Select-Object -First 1 -ExpandProperty IPAddress)
+$localIp = $localIp -or 'localhost'
+
+Write-Host "Serving $root" -ForegroundColor Cyan
+Write-Host "  Local:  http://localhost:$port/greenfield-feeds_copilot.html"
+Write-Host "  Network:  http://$localIp:$port/greenfield-feeds_copilot.html (use from phone on same Wi-Fi)" -ForegroundColor Cyan
 
 function Get-ContentType($path) {
     switch ([System.IO.Path]::GetExtension($path).ToLower()) {
