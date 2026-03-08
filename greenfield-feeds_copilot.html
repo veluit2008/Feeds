@@ -9,6 +9,8 @@
   <meta name="apple-mobile-web-app-title" content="GreenField" />
   <title>GreenField Feeds</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#065f46" />
 
   <!-- React 18 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
@@ -2712,6 +2714,19 @@ function App() {
     const container = document.getElementById("root");
     const root = ReactDOM.createRoot(container);
     root.render(React.createElement(App));
+  </script>
+  <script>
+    // ── PWA: Install / service worker ──
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(console.error);
+      });
+    }
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      window.deferredInstallPrompt = e;
+    });
   </script>
 </body>
 </html>
