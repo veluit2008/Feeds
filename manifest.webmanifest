@@ -1,8 +1,8 @@
 {
-  "name": "GreenField Feeds",
-  "short_name": "GreenField",
+  "name": "Cattle Feeds",
+  "short_name": "CattleFeeds",
   "description": "A lightweight offline-capable bookkeeping & sales dashboard.",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#fffbf0",
@@ -10,7 +10,7 @@
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>",
-      "sizes": "192x192",
+      "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }

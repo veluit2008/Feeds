@@ -1,7 +1,7 @@
-const CACHE_NAME = "greenfield-feeds-cache-v1";
+const CACHE_NAME = "Cattlefeeds-cache-v2";
 const ASSETS_TO_CACHE = [
-  ".",
-  "./greenfield-feeds_copilot.html",
+  "./",
+  "./index.html",
   "./manifest.webmanifest",
 ];
 
@@ -13,7 +13,14 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  // Clear old caches
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      )
+    ).then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener("fetch", (event) => {
