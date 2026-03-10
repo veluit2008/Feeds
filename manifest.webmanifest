@@ -2,7 +2,7 @@
   "name": "GreenField Feeds",
   "short_name": "GreenField",
   "description": "A lightweight offline-capable bookkeeping & sales dashboard.",
-  "start_url": "./greenfield-feeds_copilot.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#fffbf0",
