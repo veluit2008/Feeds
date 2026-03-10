@@ -5,23 +5,25 @@ Run from the project folder:
 
 Then open in Chrome:
   http://localhost:8000/greenfield-feeds_copilot.html
+
+You can also open it from another device on the same Wi‑Fi using the printed Network URL.
 #>
 
-$port = 8000
-$root = Get-Location
+$port = 8001
+$root = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Listen on all interfaces so other devices on the same network can reach it.
-$listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add("http://+:$port/")
-$listener.Start()
-
-# Determine a local IP (best effort) for other devices on the same Wi‑Fi/LAN.
+# Find a usable local IP for network access (best-effort).
 $localIp = (Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp | Where-Object { $_.IPAddress -notlike '169.*' -and $_.IPAddress -notlike '127.*' } | Select-Object -First 1 -ExpandProperty IPAddress)
-$localIp = $localIp -or 'localhost'
+if (-not $localIp) { $localIp = 'localhost' }
 
 Write-Host "Serving $root" -ForegroundColor Cyan
-Write-Host "  Local:  http://localhost:$port/greenfield-feeds_copilot.html"
-Write-Host "  Network:  http://$localIp:$port/greenfield-feeds_copilot.html (use from phone on same Wi-Fi)" -ForegroundColor Cyan
+Write-Host "  Local:   http://localhost:$port/greenfield-feeds_copilot.html" -ForegroundColor Cyan
+$networkUrl = "http://" + $localIp + ":" + $port + "/greenfield-feeds_copilot.html"
+Write-Host "  Network: $networkUrl (use from phone on same Wi-Fi)" -ForegroundColor Cyan
+
+# Simple HTTP server (no admin rights needed)
+$listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Any, $port)
+$listener.Start()
 
 function Get-ContentType($path) {
     switch ([System.IO.Path]::GetExtension($path).ToLower()) {
@@ -39,40 +41,43 @@ function Get-ContentType($path) {
     }
 }
 
-while ($listener.IsListening) {
-    $context = $listener.GetContext()
-    $req = $context.Request
-    $res = $context.Response
+try {
+    while ($true) {
+        $client = $listener.AcceptTcpClient()
+        try {
+            $stream = $client.GetStream()
+            $reader = New-Object System.IO.StreamReader($stream)
+            $requestLine = $reader.ReadLine()
+            if (-not $requestLine) { continue }
 
-    try {
-        $requested = $req.Url.AbsolutePath.TrimStart("/")
-        if (-not $requested) {
-            $requested = "greenfield-feeds_copilot.html"
+            $parts = $requestLine -split ' '
+            if ($parts.Length -lt 2) { continue }
+
+            $path = $parts[1].TrimStart('/')
+            if (-not $path) { $path = 'greenfield-feeds_copilot.html' }
+            $filePath = Join-Path $root $path
+
+            if (-not (Test-Path $filePath)) {
+                $body = "404 Not Found"
+                $response = "HTTP/1.1 404 Not Found`r`nContent-Type: text/plain; charset=utf-8`r`nContent-Length: $($body.Length)`r`nConnection: close`r`n`r`n$body"
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes($response)
+                $stream.Write($bytes, 0, $bytes.Length)
+                continue
+            }
+
+            $content = [System.IO.File]::ReadAllBytes($filePath)
+            $contentType = Get-ContentType $filePath
+            $header = "HTTP/1.1 200 OK`r`nContent-Type: $contentType`r`nContent-Length: $($content.Length)`r`nConnection: close`r`n`r`n"
+            $headerBytes = [System.Text.Encoding]::UTF8.GetBytes($header)
+            $stream.Write($headerBytes, 0, $headerBytes.Length)
+            $stream.Write($content, 0, $content.Length)
+        } catch {
+            # ignore per-connection errors
+        } finally {
+            if ($stream) { $stream.Close() }
+            $client.Close()
         }
-
-        $path = Join-Path $root $requested
-
-        if (-not (Test-Path $path)) {
-            $res.StatusCode = 404
-            $res.StatusDescription = "Not Found"
-            $buffer = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found")
-            $res.ContentLength64 = $buffer.Length
-            $res.OutputStream.Write($buffer, 0, $buffer.Length)
-            $res.Close()
-            continue
-        }
-
-        $bytes = [System.IO.File]::ReadAllBytes($path)
-        $res.ContentType = Get-ContentType $path
-        $res.ContentLength64 = $bytes.Length
-        $res.OutputStream.Write($bytes, 0, $bytes.Length)
-        $res.Close()
-    } catch {
-        Write-Warning "Error: $_"
-        $res.StatusCode = 500
-        $res.Close()
     }
+} finally {
+    $listener.Stop()
 }
-
-$listener.Stop()
-$listener.Close()
