@@ -17,8 +17,8 @@ $localIp = (Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp | Where-Obje
 if (-not $localIp) { $localIp = 'localhost' }
 
 Write-Host "Serving $root" -ForegroundColor Cyan
-Write-Host "  Local:   http://localhost:$port/greenfield-feeds_copilot.html" -ForegroundColor Cyan
-$networkUrl = "http://" + $localIp + ":" + $port + "/greenfield-feeds_copilot.html"
+Write-Host "  Local:   http://localhost:$port/index.html" -ForegroundColor Cyan
+$networkUrl = "http://" + $localIp + ":" + $port + "/index.html"
 Write-Host "  Network: $networkUrl (use from phone on same Wi-Fi)" -ForegroundColor Cyan
 
 # Simple HTTP server (no admin rights needed)
@@ -54,7 +54,7 @@ try {
             if ($parts.Length -lt 2) { continue }
 
             $path = $parts[1].TrimStart('/')
-            if (-not $path) { $path = 'greenfield-feeds_copilot.html' }
+            if (-not $path) { $path = 'index.html' }
             $filePath = Join-Path $root $path
 
             if (-not (Test-Path $filePath)) {
