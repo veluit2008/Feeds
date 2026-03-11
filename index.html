@@ -1922,6 +1922,7 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
         return 0;
     });
     const openAdd = () => { setEditPurchase(null); setForm(blankForm()); setShowAddProd(false); setModal(true); };
+    const openAddFromManage = () => { setManageModal(false); openAdd(); setShowAddProd(true); };
     const openEdit = (p) => {
         var _a;
         const isCustom = !units.some(u => u.label === p.unit);
@@ -2185,7 +2186,7 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
                     React.createElement("span", { style: { fontSize: 12, color: "#78716c" } },
                         products.length,
                         " products"),
-                    React.createElement("button", { className: "btn btn-primary btn-sm", onClick: () => { setManageModal(false); openAdd(); setShowAddProd(true); } }, "+ Add New Product")))))));
+                    React.createElement("button", { className: "btn btn-primary btn-sm", onClick: openAddFromManage }, "+ Add New Product"))))));
 }
 // ─────────────────────────────────────────
 // EXPENSES PAGE
