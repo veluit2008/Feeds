@@ -138,8 +138,11 @@ function dbSaveAll(db, store, items) {
     });
 }
 // ─────────────────────────────────────────
-// MOCK DATA
+// MOCK DATA (disabled by default)
 // ─────────────────────────────────────────
+// Set to true to use the demo/mock data in the UI.
+const USE_MOCK_DATA = false;
+
 const MOCK_USERS = [
     { id: 1, name: "Admin User", username: "admin", password: "admin123", role: "admin", branch_id: null },
     { id: 2, name: "Branch 1 Manager", username: "branch1", password: "branch1", role: "branch", branch_id: 1 },
@@ -206,6 +209,19 @@ const MONTHLY_SALES = [
     { month: "Feb", b1: 189000, b2: 173000, b3: 161000 },
     { month: "Mar", b1: 47850, b2: 31350, b3: 23100 },
 ];
+
+// Disable mock/demo data by default. Change to `true` to re-enable.
+if (!USE_MOCK_DATA) {
+  MOCK_USERS.length = 0;
+  BRANCHES.length = 0;
+  INITIAL_UNITS.length = 0;
+  INITIAL_PRODUCTS.length = 0;
+  INITIAL_CUSTOMERS.length = 0;
+  INITIAL_SALES.length = 0;
+  INITIAL_PURCHASES.length = 0;
+  INITIAL_EXPENSES.length = 0;
+  MONTHLY_SALES.length = 0;
+}
 // ─────────────────────────────────────────
 // STYLES
 // ─────────────────────────────────────────
