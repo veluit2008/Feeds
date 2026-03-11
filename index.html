@@ -1922,7 +1922,6 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
         return 0;
     });
     const openAdd = () => { setEditPurchase(null); setForm(blankForm()); setShowAddProd(false); setModal(true); };
-    const openAddFromManage = () => { setManageModal(false); openAdd(); setShowAddProd(true); };
     const openEdit = (p) => {
         var _a;
         const isCustom = !units.some(u => u.label === p.unit);
@@ -2117,7 +2116,7 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
                         form.useCustomUnit && effectiveUnit && (React.createElement("button", { onClick: () => {
                                 if (!units.some(u => u.label === effectiveUnit))
                                     setUnits(prev => [...prev, { id: Date.now(), label: effectiveUnit }]);
-                            }, style: { padding: "3px 10px", borderRadius: 6, background: "#d97706", color: "white", border: "none", fontSize: 10, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 500 } }, "+ Save to list"))),
+                            }, style: { padding: "3px 10px", borderRadius: 6, background: "#d97706", color: "white", border: "none", fontSize: 10, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 500 } }, "+ Save to list"))))),
                 React.createElement("div", { className: "form-grid" },
                     React.createElement("div", { className: "form-field" },
                         React.createElement("label", null,
@@ -2186,7 +2185,7 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
                     React.createElement("span", { style: { fontSize: 12, color: "#78716c" } },
                         products.length,
                         " products"),
-                    React.createElement("button", { className: "btn btn-primary btn-sm", onClick: openAddFromManage }, "+ Add New Product"))))));
+                    React.createElement("button", { className: "btn btn-primary btn-sm", onClick: () => { setManageModal(false); openAdd(); setShowAddProd(true); } }, "+ Add New Product")))))));
 }
 // ─────────────────────────────────────────
 // EXPENSES PAGE
