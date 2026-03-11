@@ -6,9 +6,10 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="GreenField" />
-  <title>GreenField Feeds</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <meta name="apple-mobile-web-app-title" content="Cattle" />
+  <title>Cattle Feeds</title>
+  <link rel="icon" href="icon-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="theme-color" content="#065f46" />
 
@@ -32,6 +33,54 @@
 <body>
   <div id="root"></div>
 
+  <!-- PWA Install Banner -->
+  <div id="pwa-install-banner" style="
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 420px;
+    background: #065f46;
+    color: #fff;
+    border-radius: 16px;
+    padding: 14px 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    align-items: center;
+    gap: 12px;
+    z-index: 9999;
+    font-family: 'DM Sans', sans-serif;
+  ">
+    <span style="font-size: 28px; flex-shrink:0;">🌿</span>
+    <div style="flex:1; min-width:0;">
+      <div style="font-weight:600; font-size:14px;">Install Cattle Feeds</div>
+      <div style="font-size:12px; opacity:0.85; margin-top:2px;">Add to home screen for offline access</div>
+    </div>
+    <button id="pwa-install-btn" style="
+      background: #fff;
+      color: #065f46;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    ">Install</button>
+    <button id="pwa-dismiss-btn" style="
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 4px;
+      flex-shrink: 0;
+    ">✕</button>
+  </div>
+
   <script>
     // ── Unpack React globals ──
     const { useState, useEffect, useRef } = React;
@@ -44,10 +93,10 @@
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INDEXEDDB PERSISTENCE LAYER
-// DB name: greenfield_db  |  version: 1
+// DB name: Cattle_db  |  version: 1
 // Stores: sales, purchases, customers, payments, expenses, products, units
 // ═══════════════════════════════════════════════════════════════════════════
-const DB_NAME = "greenfield_db";
+const DB_NAME = "Cattle_db";
 const DB_VERSION = 1;
 const DB_STORES = ["sales", "purchases", "customers", "payments", "expenses", "products", "units"];
 function openDB() {
@@ -484,7 +533,7 @@ function LoginPage({ onLogin }) {
         React.createElement("div", { className: "login-card" },
             React.createElement("div", { className: "login-logo" },
                 React.createElement("div", { className: "icon" }, "\uD83D\uDC04"),
-                React.createElement("h1", null, "GreenField Feeds"),
+                React.createElement("h1", null, "Cattle Feeds"),
                 React.createElement("p", null, "Business Management System")),
             error && React.createElement("div", { className: "alert alert-warning" },
                 "\u26A0\uFE0F ",
@@ -539,7 +588,7 @@ function Sidebar({ user, page, setPage, onLogout }) {
     return (React.createElement("div", { className: "sidebar" },
         React.createElement("div", { className: "sidebar-logo" },
             React.createElement("div", { className: "logo-icon" }, "\uD83D\uDC04"),
-            React.createElement("h1", null, "GreenField Feeds"),
+            React.createElement("h1", null, "Cattle Feeds"),
             React.createElement("p", null, "Business Manager v1.0")),
         React.createElement("div", { style: { overflowY: "auto", flex: 1 } }, nav.map(g => (React.createElement("div", { className: "sidebar-section", key: g.group },
             React.createElement("div", { className: "sidebar-section-label" }, g.group),
@@ -1089,7 +1138,7 @@ function SalesPage({ sales, setSales, products, purchases, customers, setCustome
             const outstanding = form.sale_type === "loan"
                 ? ((custForWa.credit_balance || 0) + unpaidPortion)
                 : (custForWa.credit_balance || 0);
-            const msg = encodeURIComponent(`🐄 *GreenField Feeds Invoice*\n\nProduct: ${selectedProduct === null || selectedProduct === void 0 ? void 0 : selectedProduct.product_name}\nQty: ${form.quantity} × ₹${unitPrice}\nTotal: ₹${total.toLocaleString("en-IN")}` +
+            const msg = encodeURIComponent(`🐄 *Cattle Feeds Invoice*\n\nProduct: ${selectedProduct === null || selectedProduct === void 0 ? void 0 : selectedProduct.product_name}\nQty: ${form.quantity} × ₹${unitPrice}\nTotal: ₹${total.toLocaleString("en-IN")}` +
                 (receivedAmt !== null ? `\nReceived: ₹${receivedAmt.toLocaleString("en-IN")}` : "") +
                 (form.remarks ? `\nNote: ${form.remarks}` : "") +
                 `\nMode: ${form.sale_type.charAt(0).toUpperCase() + form.sale_type.slice(1)}` +
@@ -1147,7 +1196,7 @@ function SalesPage({ sales, setSales, products, purchases, customers, setCustome
                     const prod = products.find(p => p.id === s.product_id);
                     const cust = customers.find(c => c.id === s.customer_id);
                     const branch = BRANCHES.find(b => b.id === s.branch_id);
-                    const msg = encodeURIComponent(`🐄 *GreenField Feeds*\n\n${prod === null || prod === void 0 ? void 0 : prod.product_name}\nQty: ${s.quantity} × ₹${s.price}\nTotal: ₹${s.total_amount.toLocaleString("en-IN")}` +
+                    const msg = encodeURIComponent(`🐄 *Cattle Feeds*\n\n${prod === null || prod === void 0 ? void 0 : prod.product_name}\nQty: ${s.quantity} × ₹${s.price}\nTotal: ₹${s.total_amount.toLocaleString("en-IN")}` +
                         (s.received_amount != null ? `\nReceived: ₹${s.received_amount.toLocaleString("en-IN")}` : "") +
                         (s.remarks ? `\nNote: ${s.remarks}` : "") +
                         `\nMode: ${s.sale_type}\n\nThank you! 🙏`);
@@ -1519,7 +1568,7 @@ function CustomersPage({ customers, setCustomers, sales, products, user, payment
                 const pc = customers.find(x => x.id === paySuccess.customer_id);
                 if (!pc)
                     return null;
-                const msg = encodeURIComponent("🐄 *GreenField Feeds — Payment Receipt*\n\nDear " + pc.name + ",\n" +
+                const msg = encodeURIComponent("🐄 *Cattle Feeds — Payment Receipt*\n\nDear " + pc.name + ",\n" +
                     "We received your payment of ₹" + paySuccess.amount.toLocaleString("en-IN") + " on " + paySuccess.date + ".\n" +
                     "Mode: " + paySuccess.method + (paySuccess.reference ? "\nRef: " + paySuccess.reference : "") + "\n" +
                     "Outstanding Balance: ₹" + (pc.credit_balance || 0).toLocaleString("en-IN") + "\n\nThank you! 🙏");
@@ -2624,7 +2673,7 @@ function App() {
     if (!dbReady)
         return (React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#fffbf0", gap: 16 } },
             React.createElement("div", { style: { fontSize: 40 } }, "\uD83C\uDF3F"),
-            React.createElement("div", { style: { fontFamily: "'Libre Baskerville',serif", fontSize: 22, color: "#1a1208" } }, "GreenField Feeds"),
+            React.createElement("div", { style: { fontFamily: "'Libre Baskerville',serif", fontSize: 22, color: "#1a1208" } }, "Cattle Feeds"),
             React.createElement("div", { style: { display: "flex", gap: 6, alignItems: "center" } }, [0, 1, 2].map(i => (React.createElement("div", { key: i, style: { width: 8, height: 8, borderRadius: "50%", background: "#d97706", opacity: .3, animation: `dbDot 1.2s ${i * 0.2}s infinite` } })))),
             React.createElement("div", { style: { fontSize: 13, color: "#78716c" } }, "Loading your data\u2026"),
             dbError && React.createElement("div", { style: { fontSize: 12, color: "#b91c1c", background: "#fee2e2", padding: "8px 14px", borderRadius: 8 } }, "\u26A0\uFE0F Storage unavailable \u2014 data won't be saved"),
@@ -2689,7 +2738,7 @@ function App() {
                     user.role === "admin" && (React.createElement("button", { onClick: () => {
                             const totalEntries = sales.length + purchases.length + customers.length + payments.length + expenses.length;
                             const estKB = Math.round(totalEntries * 0.4);
-                            if (window.confirm(`📦 GreenField Storage\n\n` +
+                            if (window.confirm(`📦 Cattle Storage\n\n` +
                                 `Sales: ${sales.length} entries\n` +
                                 `Purchases: ${purchases.length} entries\n` +
                                 `Customers: ${customers.length} records\n` +
@@ -2716,16 +2765,49 @@ function App() {
     root.render(React.createElement(App));
   </script>
   <script>
-    // ── PWA: Install / service worker ──
+    // ── PWA: Service Worker ──
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("sw.js").catch(console.error);
+        navigator.serviceWorker.register("sw.js")
+          .then(reg => console.log("SW registered:", reg.scope))
+          .catch(err => console.error("SW registration failed:", err));
       });
     }
 
+    // ── PWA: Install Banner ──
+    let deferredPrompt = null;
+
+    const installBanner = document.getElementById("pwa-install-banner");
+    const installBtn    = document.getElementById("pwa-install-btn");
+    const dismissBtn    = document.getElementById("pwa-dismiss-btn");
+
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
-      window.deferredInstallPrompt = e;
+      deferredPrompt = e;
+      if (installBanner) installBanner.style.display = "flex";
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener("click", async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log("Install outcome:", outcome);
+        deferredPrompt = null;
+        installBanner.style.display = "none";
+      });
+    }
+
+    if (dismissBtn) {
+      dismissBtn.addEventListener("click", () => {
+        installBanner.style.display = "none";
+      });
+    }
+
+    window.addEventListener("appinstalled", () => {
+      console.log("PWA installed successfully");
+      if (installBanner) installBanner.style.display = "none";
+      deferredPrompt = null;
     });
   </script>
 </body>
