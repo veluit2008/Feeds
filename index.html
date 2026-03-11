@@ -2613,6 +2613,20 @@ function App() {
             dbRef.current = db;
             // Load each store; fall back to INITIAL_ constants if store is empty
             const [dbSales, dbPurchases, dbCustomers, dbPayments, dbExpenses, dbProducts, dbUnits,] = await Promise.all(DB_STORES.map(s => dbGetAll(db, s)));
+            // If the user has disabled demo mode, wipe any existing data (including prior mock data)
+            if (!USE_MOCK_DATA) {
+                await Promise.all(DB_STORES.map(s => dbSaveAll(db, s, [])));
+                setSales([]);
+                setPurchases([]);
+                setCustomers([]);
+                setPayments([]);
+                setExpenses([]);
+                setProducts([]);
+                setUnits([]);
+                setDbReady(true);
+                return;
+            }
+
             if (dbSales.length)
                 setSales(dbSales);
             if (dbPurchases.length)
