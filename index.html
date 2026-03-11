@@ -140,8 +140,7 @@ function dbSaveAll(db, store, items) {
 // ─────────────────────────────────────────
 // MOCK DATA (disabled by default)
 // ─────────────────────────────────────────
-// Set to true to use the demo/mock data in the UI.
-const USE_MOCK_DATA = false;
+// Mock data disabled — app uses IndexedDB for all data
 
 const MOCK_USERS = [
     { id: 1, name: "Admin User", username: "admin", password: "admin123", role: "admin", branch_id: null },
@@ -154,61 +153,61 @@ const BRANCHES = [
     { id: 2, name: "Branch 2 - Dindigul", location: "Dindigul" },
     { id: 3, name: "Branch 3 - Virudhunagar", location: "Virudhunagar" },
 ];
-const INITIAL_UNITS = [
-    { id: 1, label: "50kg Bag" },
-    { id: 2, label: "70kg Bag" },
-    { id: 3, label: "25kg Bag" },
-    { id: 4, label: "5kg Pack" },
-    { id: 5, label: "kg" },
-    { id: 6, label: "Litre" },
-];
-const INITIAL_PRODUCTS = [
-    { id: 1, product_name: "Cattle Feed Premium", brand: "Suguna", purchase_price: 850, selling_price: 950, unit: "50kg Bag", stock: 120 },
-    { id: 2, product_name: "Dairy Feed Plus", brand: "Godrej Agrovet", purchase_price: 920, selling_price: 1050, unit: "50kg Bag", stock: 85 },
-    { id: 3, product_name: "Cattle Feed Standard", brand: "Heritage", purchase_price: 720, selling_price: 820, unit: "50kg Bag", stock: 200 },
-    { id: 4, product_name: "Mineral Mix", brand: "Kapila", purchase_price: 280, selling_price: 350, unit: "5kg Pack", stock: 15 },
-    { id: 5, product_name: "Maize Silage", brand: "Local", purchase_price: 12, selling_price: 18, unit: "kg", stock: 1200 },
-];
-const INITIAL_CUSTOMERS = [
-    { id: 1, name: "Murugan Farms", phone: "9876543210", branch_id: 1, credit_balance: 12500 },
-    { id: 2, name: "Selvi Dairy", phone: "9865432101", branch_id: 1, credit_balance: 0 },
-    { id: 3, name: "Rajan & Sons", phone: "9754321098", branch_id: 2, credit_balance: 8200 },
-    { id: 4, name: "Lakshmi Cattle", phone: "9643210987", branch_id: 2, credit_balance: 3100 },
-    { id: 5, name: "Krishnan Milk", phone: "9532109876", branch_id: 3, credit_balance: 0 },
-    { id: 6, name: "Vijay Livestock", phone: "9421098765", branch_id: 3, credit_balance: 15600 },
-];
-const INITIAL_SALES = [
-    { id: 1, branch_id: 1, product_id: 1, customer_id: 1, quantity: 10, price: 950, total_amount: 9500, sale_type: "credit", date: "2026-03-04" },
-    { id: 2, branch_id: 1, product_id: 2, customer_id: 2, quantity: 5, price: 1050, total_amount: 5250, sale_type: "cash", date: "2026-03-04" },
-    { id: 3, branch_id: 2, product_id: 3, customer_id: 3, quantity: 20, price: 820, total_amount: 16400, sale_type: "credit", date: "2026-03-04" },
-    { id: 4, branch_id: 2, product_id: 1, customer_id: 4, quantity: 8, price: 950, total_amount: 7600, sale_type: "cash", date: "2026-03-03" },
-    { id: 5, branch_id: 3, product_id: 2, customer_id: 5, quantity: 12, price: 1050, total_amount: 12600, sale_type: "cash", date: "2026-03-03" },
-    { id: 6, branch_id: 3, product_id: 4, customer_id: 6, quantity: 30, price: 350, total_amount: 10500, sale_type: "credit", date: "2026-03-02" },
-    { id: 7, branch_id: 1, product_id: 5, customer_id: 1, quantity: 500, price: 18, total_amount: 9000, sale_type: "cash", date: "2026-03-02" },
-    { id: 8, branch_id: 2, product_id: 2, customer_id: 3, quantity: 7, price: 1050, total_amount: 7350, sale_type: "direct", date: "2026-03-01" },
-];
-const INITIAL_PURCHASES = [
-    { id: 1, product_id: 1, quantity: 200, price: 850, unit: "50kg Bag", supplier: "Suguna Feeds Ltd", date: "2026-02-25", branch_id: 1 },
-    { id: 2, product_id: 2, quantity: 150, price: 920, unit: "50kg Bag", supplier: "Godrej Agrovet", date: "2026-02-26", branch_id: 2 },
-    { id: 3, product_id: 3, quantity: 300, price: 720, unit: "70kg Bag", supplier: "Heritage Feeds", date: "2026-02-28", branch_id: 3 },
-    { id: 4, product_id: 4, quantity: 100, price: 280, unit: "5kg Pack", supplier: "Kapila Pashu", date: "2026-03-01", branch_id: 1 },
-    { id: 5, product_id: 5, quantity: 2000, price: 12, unit: "kg", supplier: "Local Farm Co", date: "2026-03-02", branch_id: 2 },
-];
-const INITIAL_EXPENSES = [
-    { id: 1, category: "Rent", description: "Branch 1 Monthly Rent", amount: 25000, date: "2026-03-01", branch_id: 1 },
-    { id: 2, category: "Salary", description: "Staff Salaries", amount: 85000, date: "2026-03-01", branch_id: null },
-    { id: 3, category: "Electricity", description: "Branch 2 Electricity", amount: 4500, date: "2026-03-02", branch_id: 2 },
-    { id: 4, category: "Transport", description: "Delivery charges", amount: 12000, date: "2026-03-03", branch_id: 3 },
-    { id: 5, category: "Miscellaneous", description: "Office supplies", amount: 3200, date: "2026-03-04", branch_id: 1 },
-];
-const MONTHLY_SALES = [
-    { month: "Oct", b1: 145000, b2: 132000, b3: 118000 },
-    { month: "Nov", b1: 162000, b2: 148000, b3: 135000 },
-    { month: "Dec", b1: 178000, b2: 165000, b3: 152000 },
-    { month: "Jan", b1: 155000, b2: 141000, b3: 128000 },
-    { month: "Feb", b1: 189000, b2: 173000, b3: 161000 },
-    { month: "Mar", b1: 47850, b2: 31350, b3: 23100 },
-];
+// const INITIAL_UNITS = [
+// { id: 1, label: "50kg Bag" },
+// { id: 2, label: "70kg Bag" },
+// { id: 3, label: "25kg Bag" },
+// { id: 4, label: "5kg Pack" },
+// { id: 5, label: "kg" },
+// { id: 6, label: "Litre" },
+// ];
+// const INITIAL_PRODUCTS = [
+// { id: 1, product_name: "Cattle Feed Premium", brand: "Suguna", purchase_price: 850, selling_price: 950, unit: "50kg Bag", stock: 120 },
+// { id: 2, product_name: "Dairy Feed Plus", brand: "Godrej Agrovet", purchase_price: 920, selling_price: 1050, unit: "50kg Bag", stock: 85 },
+// { id: 3, product_name: "Cattle Feed Standard", brand: "Heritage", purchase_price: 720, selling_price: 820, unit: "50kg Bag", stock: 200 },
+// { id: 4, product_name: "Mineral Mix", brand: "Kapila", purchase_price: 280, selling_price: 350, unit: "5kg Pack", stock: 15 },
+// { id: 5, product_name: "Maize Silage", brand: "Local", purchase_price: 12, selling_price: 18, unit: "kg", stock: 1200 },
+// ];
+// const INITIAL_CUSTOMERS = [
+// { id: 1, name: "Murugan Farms", phone: "9876543210", branch_id: 1, credit_balance: 12500 },
+// { id: 2, name: "Selvi Dairy", phone: "9865432101", branch_id: 1, credit_balance: 0 },
+// { id: 3, name: "Rajan & Sons", phone: "9754321098", branch_id: 2, credit_balance: 8200 },
+// { id: 4, name: "Lakshmi Cattle", phone: "9643210987", branch_id: 2, credit_balance: 3100 },
+// { id: 5, name: "Krishnan Milk", phone: "9532109876", branch_id: 3, credit_balance: 0 },
+// { id: 6, name: "Vijay Livestock", phone: "9421098765", branch_id: 3, credit_balance: 15600 },
+// ];
+// const INITIAL_SALES = [
+// { id: 1, branch_id: 1, product_id: 1, customer_id: 1, quantity: 10, price: 950, total_amount: 9500, sale_type: "credit", date: "2026-03-04" },
+// { id: 2, branch_id: 1, product_id: 2, customer_id: 2, quantity: 5, price: 1050, total_amount: 5250, sale_type: "cash", date: "2026-03-04" },
+// { id: 3, branch_id: 2, product_id: 3, customer_id: 3, quantity: 20, price: 820, total_amount: 16400, sale_type: "credit", date: "2026-03-04" },
+// { id: 4, branch_id: 2, product_id: 1, customer_id: 4, quantity: 8, price: 950, total_amount: 7600, sale_type: "cash", date: "2026-03-03" },
+// { id: 5, branch_id: 3, product_id: 2, customer_id: 5, quantity: 12, price: 1050, total_amount: 12600, sale_type: "cash", date: "2026-03-03" },
+// { id: 6, branch_id: 3, product_id: 4, customer_id: 6, quantity: 30, price: 350, total_amount: 10500, sale_type: "credit", date: "2026-03-02" },
+// { id: 7, branch_id: 1, product_id: 5, customer_id: 1, quantity: 500, price: 18, total_amount: 9000, sale_type: "cash", date: "2026-03-02" },
+// { id: 8, branch_id: 2, product_id: 2, customer_id: 3, quantity: 7, price: 1050, total_amount: 7350, sale_type: "direct", date: "2026-03-01" },
+// ];
+// const INITIAL_PURCHASES = [
+// { id: 1, product_id: 1, quantity: 200, price: 850, unit: "50kg Bag", supplier: "Suguna Feeds Ltd", date: "2026-02-25", branch_id: 1 },
+// { id: 2, product_id: 2, quantity: 150, price: 920, unit: "50kg Bag", supplier: "Godrej Agrovet", date: "2026-02-26", branch_id: 2 },
+// { id: 3, product_id: 3, quantity: 300, price: 720, unit: "70kg Bag", supplier: "Heritage Feeds", date: "2026-02-28", branch_id: 3 },
+// { id: 4, product_id: 4, quantity: 100, price: 280, unit: "5kg Pack", supplier: "Kapila Pashu", date: "2026-03-01", branch_id: 1 },
+// { id: 5, product_id: 5, quantity: 2000, price: 12, unit: "kg", supplier: "Local Farm Co", date: "2026-03-02", branch_id: 2 },
+// ];
+// const INITIAL_EXPENSES = [
+// { id: 1, category: "Rent", description: "Branch 1 Monthly Rent", amount: 25000, date: "2026-03-01", branch_id: 1 },
+// { id: 2, category: "Salary", description: "Staff Salaries", amount: 85000, date: "2026-03-01", branch_id: null },
+// { id: 3, category: "Electricity", description: "Branch 2 Electricity", amount: 4500, date: "2026-03-02", branch_id: 2 },
+// { id: 4, category: "Transport", description: "Delivery charges", amount: 12000, date: "2026-03-03", branch_id: 3 },
+// { id: 5, category: "Miscellaneous", description: "Office supplies", amount: 3200, date: "2026-03-04", branch_id: 1 },
+// ];
+// const MONTHLY_SALES = [
+// { month: "Oct", b1: 145000, b2: 132000, b3: 118000 },
+// { month: "Nov", b1: 162000, b2: 148000, b3: 135000 },
+// { month: "Dec", b1: 178000, b2: 165000, b3: 152000 },
+// { month: "Jan", b1: 155000, b2: 141000, b3: 128000 },
+// { month: "Feb", b1: 189000, b2: 173000, b3: 161000 },
+// { month: "Mar", b1: 47850, b2: 31350, b3: 23100 },
+// ];
 
 // Disable mock/demo data by default. Change to `true` to re-enable.
 if (!USE_MOCK_DATA) {
@@ -1887,7 +1886,7 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
     const [modal, setModal] = (0, useState)(false);
     const [editPurchase, setEditPurchase] = (0, useState)(null); // purchase being edited
     const [manageModal, setManageModal] = (0, useState)(false);
-    const blankForm = () => { var _a; return ({ product_id: "", quantity: "", bags: "", price: "", unit: ((_a = units[0]) === null || _a === void 0 ? void 0 : _a.label) || "50kg Bag", unitCustom: "", useCustomUnit: false, supplier: "", date: today(), branch_id: 1 }); };
+    const blankForm = () => { var _a; return ({ product_id: "", quantity: "", bags: "", price: "", selling_price: "", unit: ((_a = units[0]) === null || _a === void 0 ? void 0 : _a.label) || "50kg Bag", unitCustom: "", useCustomUnit: false, supplier: "", date: today(), branch_id: 1 }); };
     const [form, setForm] = (0, useState)(blankForm());
     const [newProd, setNewProd] = (0, useState)({ product_name: "", brand: "", purchase_price: "", selling_price: "", unit: ((_a = units[0]) === null || _a === void 0 ? void 0 : _a.label) || "50kg Bag" });
     const [showAddProd, setShowAddProd] = (0, useState)(false);
@@ -1899,7 +1898,7 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
         const prod = products.find(p => p.id === +product_id);
         setForm(f => {
             var _a;
-            return (Object.assign(Object.assign({}, f), { product_id, price: prod ? String(prod.purchase_price) : f.price, unit: prod ? prod.unit : (((_a = units[0]) === null || _a === void 0 ? void 0 : _a.label) || ""), useCustomUnit: false, unitCustom: "" }));
+            return (Object.assign(Object.assign({}, f), { product_id, price: prod ? String(prod.purchase_price) : f.price, selling_price: prod ? String(prod.selling_price) : f.selling_price, unit: prod ? prod.unit : (((_a = units[0]) === null || _a === void 0 ? void 0 : _a.label) || ""), useCustomUnit: false, unitCustom: "" }));
         });
     };
     const effectiveUnit = form.useCustomUnit ? form.unitCustom : form.unit;
@@ -1959,6 +1958,11 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
             date: form.date,
             branch_id: +form.branch_id,
         };
+        if (form.selling_price && +form.selling_price > 0) {
+            const updatedProds = products.map(p => p.id === +form.product_id ? Object.assign(Object.assign({}, p), { purchase_price: +form.price || p.purchase_price, selling_price: +form.selling_price }) : p);
+            setProducts(updatedProds);
+            autoSave("products", updatedProds);
+        }
         if (editPurchase) {
             setPurchases(purchases.map(p => p.id === editPurchase.id ? record : p));
         }
@@ -1977,12 +1981,10 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
             setAddProdError("Product name is required.");
             return;
         }
-        if (!newProd.purchase_price || !newProd.selling_price) {
-            setAddProdError("Purchase and selling price required.");
-            return;
-        }
-        const created = Object.assign(Object.assign({ id: Date.now() }, newProd), { purchase_price: +newProd.purchase_price, selling_price: +newProd.selling_price, stock: 0 });
-        setProducts(prev => [...prev, created]);
+        const created = Object.assign(Object.assign({ id: Date.now() }, newProd), { unit: newProd.unit, purchase_price: +form.price || 0, selling_price: +form.selling_price || 0, stock: 0 });
+        const updatedProducts = [...products, created];
+        setProducts(updatedProducts);
+        autoSave("products", updatedProducts);
         setForm(f => (Object.assign(Object.assign({}, f), { product_id: String(created.id), unit: created.unit, useCustomUnit: false, unitCustom: "", price: String(created.purchase_price) })));
         setShowAddProd(false);
         setNewProd({ product_name: "", brand: "", purchase_price: "", selling_price: "", unit: ((_a = units[0]) === null || _a === void 0 ? void 0 : _a.label) || "50kg Bag" });
@@ -2096,13 +2098,8 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
                         React.createElement("div", null,
                             React.createElement("label", { style: { fontSize: 10, fontWeight: 600, color: "#78716c", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 4 } }, "Unit"),
                             React.createElement("select", { value: newProd.unit, onChange: e => setNewProd(Object.assign(Object.assign({}, newProd), { unit: e.target.value })), style: { width: "100%", padding: "8px 10px", borderRadius: 7, border: "1px solid #fde68a", fontSize: 13, fontFamily: "'DM Sans',sans-serif", outline: "none", background: "white" } }, units.map(u => React.createElement("option", { key: u.id, value: u.label }, u.label)))),
-                        React.createElement("div", null,
-                            React.createElement("label", { style: { fontSize: 10, fontWeight: 600, color: "#78716c", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 4 } }, "Purchase Price (\u20B9) *"),
-                            React.createElement("input", { type: "number", value: newProd.purchase_price, onChange: e => setNewProd(Object.assign(Object.assign({}, newProd), { purchase_price: e.target.value })), placeholder: "0", style: { width: "100%", padding: "8px 10px", borderRadius: 7, border: "1px solid #fde68a", fontSize: 13, fontFamily: "'DM Sans',sans-serif", outline: "none", background: "white" } })),
-                        React.createElement("div", null,
-                            React.createElement("label", { style: { fontSize: 10, fontWeight: 600, color: "#78716c", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 4 } }, "Selling Price (\u20B9) *"),
-                            React.createElement("input", { type: "number", value: newProd.selling_price, onChange: e => setNewProd(Object.assign(Object.assign({}, newProd), { selling_price: e.target.value })), placeholder: "0", style: { width: "100%", padding: "8px 10px", borderRadius: 7, border: "1px solid #fde68a", fontSize: 13, fontFamily: "'DM Sans',sans-serif", outline: "none", background: "white" } }))),
-                    React.createElement("button", { onClick: addNewProductInline, style: { padding: "8px 16px", borderRadius: 8, background: "#d97706", color: "white", border: "none", fontSize: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 500 } }, "\u2713 Add Product & Select"))),
+
+                    React.createElement("button", { onClick: addNewProductInline, style: { padding: "8px 16px", borderRadius: 8, background: "#d97706", color: "white", border: "none", fontSize: 12, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 500 } }, "\u2713 Add Product & Select"))))),
                 React.createElement("div", { style: { background: "#f8faff", border: "1px solid #dbeafe", borderRadius: 10, padding: "14px", marginBottom: 14 } },
                     React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: "#1d4ed8", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" } }, "\uD83D\uDCE6 Unit of Purchase"),
                     React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 10, alignItems: "end" } },
@@ -2143,8 +2140,11 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
                             React.createElement("span", { style: { color: "#94a3b8", fontWeight: 400, fontSize: 10 } }, "(optional)")),
                         React.createElement("input", { type: "number", value: form.bags, onChange: e => setForm(Object.assign(Object.assign({}, form), { bags: e.target.value })), placeholder: "e.g. 5 bags" })),
                     React.createElement("div", { className: "form-field" },
-                        React.createElement("label", null, "Price / Unit (\u20B9)"),
+                        React.createElement("label", null, "Purchase Price / Unit (\u20B9)"),
                         React.createElement("input", { type: "number", value: form.price, onChange: e => setForm(Object.assign(Object.assign({}, form), { price: e.target.value })), placeholder: "0" })),
+                    React.createElement("div", { className: "form-field" },
+                        React.createElement("label", null, "Selling Price / Unit (\u20B9)"),
+                        React.createElement("input", { type: "number", value: form.selling_price || "", onChange: e => setForm(Object.assign(Object.assign({}, form), { selling_price: e.target.value })), placeholder: "0" })),
                     React.createElement("div", { className: "form-field" },
                         React.createElement("label", null, "Supplier"),
                         React.createElement("input", { value: form.supplier, onChange: e => setForm(Object.assign(Object.assign({}, form), { supplier: e.target.value })), placeholder: "e.g. Suguna Feeds Ltd" })),
@@ -2199,7 +2199,7 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
                     React.createElement("span", { style: { fontSize: 12, color: "#78716c" } },
                         products.length,
                         " products"),
-                    React.createElement("button", { className: "btn btn-primary btn-sm", onClick: () => { setManageModal(false); openAdd(); setShowAddProd(true); } }, "+ Add New Product")))))));
+                    React.createElement("button", { className: "btn btn-primary btn-sm", onClick: () => { setManageModal(false); openAdd(); setShowAddProd(true); } }, "+ Add New Product"))))));
 }
 // ─────────────────────────────────────────
 // EXPENSES PAGE
@@ -2590,12 +2590,12 @@ function BranchDashboard({ user, sales, customers, products, purchases }) {
 function App() {
     const [user, setUser] = (0, useState)(null);
     const [page, setPage] = (0, useState)(null);
-    const [products, setProducts] = (0, useState)(INITIAL_PRODUCTS);
-    const [customers, setCustomers] = (0, useState)(INITIAL_CUSTOMERS);
-    const [sales, setSales] = (0, useState)(INITIAL_SALES);
-    const [purchases, setPurchases] = (0, useState)(INITIAL_PURCHASES);
-    const [expenses, setExpenses] = (0, useState)(INITIAL_EXPENSES);
-    const [units, setUnits] = (0, useState)(INITIAL_UNITS);
+    const [products, setProducts] = (0, useState)([]);
+    const [customers, setCustomers] = (0, useState)([]);
+    const [sales, setSales] = (0, useState)([]);
+    const [purchases, setPurchases] = (0, useState)([]);
+    const [expenses, setExpenses] = (0, useState)([]);
+    const [units, setUnits] = (0, useState)([]);
     const [payments, setPayments] = (0, useState)([]);
     const [saleCustomer, setSaleCustomer] = (0, useState)(null);
     // ── IndexedDB state
@@ -2609,47 +2609,15 @@ function App() {
         openDB()
             .then(async (db) => {
             dbRef.current = db;
-            // Load each store; fall back to INITIAL_ constants if store is empty
-            const [dbSales, dbPurchases, dbCustomers, dbPayments, dbExpenses, dbProducts, dbUnits,] = await Promise.all(DB_STORES.map(s => dbGetAll(db, s)));
-            // If the user has disabled demo mode, wipe any existing data (including prior mock data)
-            if (!USE_MOCK_DATA) {
-                await Promise.all(DB_STORES.map(s => dbSaveAll(db, s, [])));
-                setSales([]);
-                setPurchases([]);
-                setCustomers([]);
-                setPayments([]);
-                setExpenses([]);
-                setProducts([]);
-                setUnits([]);
-                setDbReady(true);
-                return;
-            }
-
-            if (dbSales.length)
-                setSales(dbSales);
-            if (dbPurchases.length)
-                setPurchases(dbPurchases);
-            if (dbCustomers.length)
-                setCustomers(dbCustomers);
-            if (dbPayments.length)
-                setPayments(dbPayments);
-            if (dbExpenses.length)
-                setExpenses(dbExpenses);
-            if (dbProducts.length)
-                setProducts(dbProducts);
-            if (dbUnits.length)
-                setUnits(dbUnits);
-            // If DB is brand-new (empty), seed it with mock data
-            if (!dbSales.length && !dbPurchases.length) {
-                await Promise.all([
-                    dbSaveAll(db, "sales", INITIAL_SALES),
-                    dbSaveAll(db, "purchases", INITIAL_PURCHASES),
-                    dbSaveAll(db, "customers", INITIAL_CUSTOMERS),
-                    dbSaveAll(db, "expenses", INITIAL_EXPENSES),
-                    dbSaveAll(db, "products", INITIAL_PRODUCTS),
-                    dbSaveAll(db, "units", INITIAL_UNITS),
-                ]);
-            }
+            // Load all stores from IndexedDB
+            const [dbSales, dbPurchases, dbCustomers, dbPayments, dbExpenses, dbProducts, dbUnits] = await Promise.all(DB_STORES.map(s => dbGetAll(db, s)));
+            if (dbSales.length) setSales(dbSales);
+            if (dbPurchases.length) setPurchases(dbPurchases);
+            if (dbCustomers.length) setCustomers(dbCustomers);
+            if (dbPayments.length) setPayments(dbPayments);
+            if (dbExpenses.length) setExpenses(dbExpenses);
+            if (dbProducts.length) setProducts(dbProducts);
+            if (dbUnits.length) setUnits(dbUnits);
             setDbReady(true);
         })
             .catch((err) => {
@@ -2689,13 +2657,13 @@ function App() {
         if (!dbRef.current)
             return;
         await Promise.all(DB_STORES.map(s => dbSaveAll(dbRef.current, s, [])));
-        setSales(INITIAL_SALES);
-        setPurchases(INITIAL_PURCHASES);
-        setCustomers(INITIAL_CUSTOMERS);
+        setSales([]);
+        setPurchases([]);
+        setCustomers([]);
         setPayments([]);
-        setExpenses(INITIAL_EXPENSES);
-        setProducts(INITIAL_PRODUCTS);
-        setUnits(INITIAL_UNITS);
+        setExpenses([]);
+        setProducts([]);
+        setUnits([]);
     };
     // ── Show loading screen while DB reads
     if (!dbReady)
