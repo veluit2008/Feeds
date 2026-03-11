@@ -2116,7 +2116,7 @@ function PurchasesPage({ purchases, setPurchases, products, setProducts, units, 
                         form.useCustomUnit && effectiveUnit && (React.createElement("button", { onClick: () => {
                                 if (!units.some(u => u.label === effectiveUnit))
                                     setUnits(prev => [...prev, { id: Date.now(), label: effectiveUnit }]);
-                            }, style: { padding: "3px 10px", borderRadius: 6, background: "#d97706", color: "white", border: "none", fontSize: 10, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 500 } }, "+ Save to list")))),
+                            }, style: { padding: "3px 10px", borderRadius: 6, background: "#d97706", color: "white", border: "none", fontSize: 10, cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontWeight: 500 } }, "+ Save to list"))),
                 React.createElement("div", { className: "form-grid" },
                     React.createElement("div", { className: "form-field" },
                         React.createElement("label", null,
