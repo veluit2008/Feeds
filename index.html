@@ -474,15 +474,117 @@ style.textContent = `
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 999px; }
   
+  /* HAMBURGER BUTTON */
+  .hamburger-btn {
+    display: none;
+    background: none; border: none; cursor: pointer;
+    padding: 6px 8px; border-radius: 6px;
+    color: var(--text-main); font-size: 22px; line-height: 1;
+    flex-shrink: 0;
+  }
+  .hamburger-btn:hover { background: #f5f5f4; }
+
+  /* SIDEBAR OVERLAY (mobile backdrop) */
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 99;
+  }
+  .sidebar-overlay.open { display: block; }
+
   /* RESPONSIVE */
   @media (max-width: 900px) {
     .chart-grid { grid-template-columns: 1fr; }
     .chart-grid-3 { grid-template-columns: 1fr; }
   }
-  @media (max-width: 700px) {
+
+  @media (max-width: 768px) {
     :root { --sidebar-w: 0px; }
-    .sidebar { transform: translateX(-240px); }
+
+    /* Sidebar slides in/out */
+    .sidebar {
+      transform: translateX(-240px);
+      z-index: 200;
+      width: 240px;
+      transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar.open { transform: translateX(0); }
+
     .main-content { margin-left: 0; }
+
+    /* Show hamburger */
+    .hamburger-btn { display: flex; align-items: center; justify-content: center; }
+
+    /* Topbar — compact on mobile */
+    .topbar {
+      padding: 10px 14px;
+      gap: 8px;
+    }
+    .topbar h2 { font-size: 15px; }
+    .topbar-right { gap: 6px; flex-wrap: nowrap; }
+
+    /* Hide low-priority topbar items on mobile */
+    .date-chip { display: none; }
+    .badge-branch { display: none; }
+
+    /* Page body — smaller padding */
+    .page-body { padding: 14px 12px; }
+
+    /* Tables — horizontal scroll */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 520px; }
+
+    /* Stat cards — 2 columns on mobile */
+    .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-card .value { font-size: 20px; }
+
+    /* Charts — stack */
+    .chart-grid { grid-template-columns: 1fr; }
+    .chart-grid-3 { grid-template-columns: 1fr; }
+
+    /* Balance sheet — stack */
+    .bs-grid { grid-template-columns: 1fr; }
+
+    /* Forms — single column */
+    .form-grid { grid-template-columns: 1fr; }
+
+    /* Tabs — wrap */
+    .tabs { flex-wrap: wrap; width: 100%; }
+    .tab { flex: 1; text-align: center; }
+
+    /* Modal — full bottom sheet style */
+    .modal-overlay { align-items: flex-end; padding: 0; }
+    .modal {
+      border-radius: 20px 20px 0 0;
+      max-height: 90vh;
+      padding: 20px 16px 28px;
+    }
+
+    /* Login card — full width */
+    .login-card { padding: 28px 20px; margin: 16px; }
+
+    /* Summary row — wrap */
+    .summary-row { flex-wrap: wrap; gap: 8px; }
+
+    /* Section header — stack on very small */
+    .section-header { flex-wrap: wrap; gap: 8px; }
+    .section-header h3 { font-size: 14px; }
+
+    /* Buttons — bigger tap target */
+    .btn { min-height: 36px; }
+    .btn-sm { padding: 6px 10px; }
+
+    /* Form inputs — bigger on mobile */
+    .form-field input, .form-field select, .form-field textarea {
+      font-size: 16px; /* Prevents iOS zoom */
+      padding: 11px 12px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .topbar h2 { font-size: 13px; }
   }
   
   /* TOOLTIP CUSTOM */
@@ -552,7 +654,7 @@ function LoginPage({ onLogin }) {
 // ─────────────────────────────────────────
 // SIDEBAR
 // ─────────────────────────────────────────
-function Sidebar({ user, page, setPage, onLogout }) {
+function Sidebar({ user, page, setPage, onLogout, isOpen }) {
     var _a;
     const isAdmin = user.role === "admin";
     const [confirmLogout, setConfirmLogout] = (0, useState)(false);
@@ -585,7 +687,7 @@ function Sidebar({ user, page, setPage, onLogout }) {
     ];
     const nav = isAdmin ? adminNav : branchNav;
     const branchName = isAdmin ? null : (_a = BRANCHES.find(b => b.id === user.branch_id)) === null || _a === void 0 ? void 0 : _a.name;
-    return (React.createElement("div", { className: "sidebar" },
+    return (React.createElement("div", { className: `sidebar${isOpen ? " open" : ""}` },
         React.createElement("div", { className: "sidebar-logo" },
             React.createElement("div", { className: "logo-icon" }, "\uD83D\uDC04"),
             React.createElement("h1", null, "Cattle Feeds"),
@@ -2669,6 +2771,8 @@ function App() {
         setProducts(INITIAL_PRODUCTS);
         setUnits(INITIAL_UNITS);
     };
+    const [sidebarOpen, setSidebarOpen] = (0, useState)(false);
+    const closeSidebar = () => setSidebarOpen(false);
     // ── Show loading screen while DB reads
     if (!dbReady)
         return (React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#fffbf0", gap: 16 } },
@@ -2719,9 +2823,11 @@ function App() {
         }
     };
     return (React.createElement("div", { className: "app-wrap" },
-        React.createElement(Sidebar, { user: user, page: page, setPage: setPage, onLogout: handleLogout }),
+        React.createElement("div", { className: `sidebar-overlay${sidebarOpen ? " open" : ""}`, onClick: closeSidebar }),
+        React.createElement(Sidebar, { user: user, page: page, setPage: (p) => { setPage(p); closeSidebar(); }, onLogout: handleLogout, isOpen: sidebarOpen }),
         React.createElement("div", { className: "main-content" },
             React.createElement("div", { className: "topbar" },
+                React.createElement("button", { className: "hamburger-btn", onClick: () => setSidebarOpen(o => !o), "aria-label": "Toggle menu" }, "☰"),
                 React.createElement("h2", null, PAGE_TITLES[page] || "Dashboard"),
                 React.createElement("div", { className: "topbar-right" },
                     branch && React.createElement("span", { className: "badge-branch" },
